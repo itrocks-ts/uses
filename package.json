@@ -1,0 +1,53 @@
+{
+	"author": {
+		"name": "Baptiste Pillot",
+		"email": "baptiste@pillot.fr"
+	},
+	"dependencies": {
+		"@itrocks/class-type": "latest",
+		"@itrocks/decorator": "latest",
+		"typescript": "^5.6"
+	},
+	"description": "",
+	"devDependencies": {
+		"@types/node": "^22.10"
+	},
+	"engines": {
+		"node": ">=18"
+	},
+	"exports": {
+		".": {
+			"import": "./esm/uses.js",
+			"require": "./cjs/uses.js",
+			"types": "./esm/uses.d.ts"
+		},
+		"./uses-interface-plugin": {
+			"import": "./esm/uses-interface-plugin.js",
+			"require": "./cjs/uses-interface-plugin.js",
+			"types": "./esm/uses-interface-plugin.d.ts"
+		}
+	},
+	"files": [
+		"LICENSE",
+		"README.md",
+		"*/*.d.ts",
+		"*/*.js"
+	],
+	"homepage": "https://it.rocks",
+	"keywords": [
+		"backend",
+		"it.rocks"
+	],
+	"license": "ISC",
+	"name": "@itrocks/uses",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/itrocks-ts/uses.git"
+	},
+	"scripts": {
+		"build": "npm run build:cjs && npm run build:esm",
+		"build:cjs": "tsc -p tsconfig.cjs.json",
+		"build:esm": "tsc -p tsconfig.esm.json"
+	},
+	"version": "0.0.1"
+}
