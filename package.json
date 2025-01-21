@@ -8,7 +8,7 @@
 		"@itrocks/decorator": "latest",
 		"typescript": "^5.6"
 	},
-	"description": "",
+	"description": "Apply reusable mixins to your classes effortlessly with the @Uses decorator",
 	"devDependencies": {
 		"@types/node": "^22.10"
 	},
@@ -36,7 +36,14 @@
 	"homepage": "https://it.rocks",
 	"keywords": [
 		"backend",
-		"it.rocks"
+		"class",
+		"compose",
+		"composition",
+		"inheritance",
+		"it.rocks",
+		"mixin",
+		"multiple",
+		"trait"
 	],
 	"license": "ISC",
 	"name": "@itrocks/uses",
@@ -49,5 +56,5 @@
 		"build:cjs": "tsc -p tsconfig.cjs.json",
 		"build:esm": "tsc -p tsconfig.esm.json"
 	},
-	"version": "0.0.1"
+	"version": "0.0.2"
 }
