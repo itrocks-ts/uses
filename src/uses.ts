@@ -8,7 +8,7 @@ export function Super<T extends object>(self: object): T
 
 function uses<T extends Type>(target: T, mixins: Type[]): T
 {
-	const BuiltClass = (() => class extends target {
+	const builtTarget = (() => class extends target {
 		[index: string]: any
 		constructor(...args: any[]) {
 			super(...args)
@@ -23,21 +23,21 @@ function uses<T extends Type>(target: T, mixins: Type[]): T
 			for (const [name, descriptor] of Object.entries(Object.getOwnPropertyDescriptors(proto))) {
 				if (already.includes(name)) continue
 				already.push(name)
-				Object.defineProperty(BuiltClass.prototype, name, descriptor)
+				Object.defineProperty(builtTarget.prototype, name, descriptor)
 			}
 			proto = Object.getPrototypeOf(proto)
 		}
 	}
 
 	for (const mixin of mixins) {
-		Object.defineProperty(BuiltClass.prototype, mixin.name, {
+		Object.defineProperty(builtTarget.prototype, mixin.name, {
 			value: function(...args: any[]) {
 				Object.assign(this, new mixin(...args))
 			}
 		})
 	}
 
-	return BuiltClass
+	return builtTarget
 }
 
 const USES = Symbol('uses')
@@ -46,8 +46,10 @@ export default Uses
 export function Uses<T extends object>(...mixins: Type[])
 {
 	return (target: Type<T>) => {
-		decorate<T>(USES, mixins.concat(usesOf(target)))(target)
-		return uses(target, mixins)
+		mixins = mixins.concat(usesOf(target))
+		const builtTarget = uses(target, mixins)
+		decorate<T>(USES, mixins)(builtTarget)
+		return builtTarget
 	}
 }
 
