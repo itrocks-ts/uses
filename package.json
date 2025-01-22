@@ -5,15 +5,15 @@
 	},
 	"dependencies": {
 		"@itrocks/class-type": "latest",
-		"@itrocks/decorator": "latest",
-		"typescript": "^5.6"
+		"@itrocks/decorator": "latest"
 	},
 	"description": "Apply reusable mixins to your classes effortlessly with the @Uses decorator",
 	"devDependencies": {
 		"@types/jest": "^29.5",
 		"@types/node": "^22.10",
 		"jest": "^29.7",
-		"ts-jest": "^29.2"
+		"ts-jest": "^29.2",
+		"typescript": "^5.6"
 	},
 	"engines": {
 		"node": ">=18"
@@ -65,5 +65,5 @@
 		"build:esm": "tsc -p tsconfig.esm.json",
 		"test": "jest"
 	},
-	"version": "0.0.4"
+	"version": "0.0.5"
 }
