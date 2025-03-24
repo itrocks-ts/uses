@@ -42,7 +42,6 @@ function uses<T extends Type>(target: T, mixins: Type[]): T
 
 const USES = Symbol('uses')
 
-export default Uses
 export function Uses<T extends object>(...mixins: Type[])
 {
 	return (target: Type<T>) => {

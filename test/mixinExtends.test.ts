@@ -1,4 +1,4 @@
-import Uses from '@itrocks/uses'
+import { Uses } from '@itrocks/uses'
 
 class Mixin1Parent {
 	mixin1ParentMethod() { return 'mixin1ParentMethod' }
