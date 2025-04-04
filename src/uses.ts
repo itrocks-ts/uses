@@ -31,9 +31,10 @@ function uses<T extends Type>(target: T, mixins: Type[]): T
 
 	for (const mixin of mixins) {
 		Object.defineProperty(builtTarget.prototype, mixin.name, {
-			value: function(...args: any[]) {
-				Object.assign(this, new mixin(...args))
-			}
+			configurable: true,
+			enumerable:   false,
+			value:        function(...args: any[]) { Object.assign(this, new mixin(...args)) },
+			writable:     true
 		})
 	}
 

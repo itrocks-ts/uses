@@ -40,7 +40,9 @@
 	"jest": {
 		"preset": "ts-jest",
 		"testEnvironment": "node",
-		"testMatch": ["**/?(*.)+(spec|test).ts"]
+		"testMatch": [
+			"**/?(*.)+(spec|test).ts"
+		]
 	},
 	"keywords": [
 		"backend",
@@ -65,5 +67,5 @@
 		"build:esm": "tsc -p tsconfig.esm.json",
 		"test": "jest"
 	},
-	"version": "0.0.7"
+	"version": "0.0.8"
 }
