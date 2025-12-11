@@ -49,10 +49,13 @@
 		"class",
 		"compose",
 		"composition",
+		"decorator",
 		"inheritance",
 		"it.rocks",
 		"mixin",
 		"multiple",
+		"typescript",
+		"typing",
 		"trait"
 	],
 	"license": "ISC",
@@ -67,5 +70,5 @@
 		"build:esm": "tsc -p tsconfig.esm.json",
 		"test": "jest"
 	},
-	"version": "0.0.10"
+	"version": "0.0.11"
 }
