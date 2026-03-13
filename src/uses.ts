@@ -1,5 +1,8 @@
-import { baseType, ObjectOrType, Type } from '@itrocks/class-type'
-import { decorate, ownDecoratorOf }     from '@itrocks/decorator/class'
+import { baseType }       from '@itrocks/class-type'
+import { ObjectOrType }   from '@itrocks/class-type'
+import { Type }           from '@itrocks/class-type'
+import { decorate }       from '@itrocks/decorator/class'
+import { ownDecoratorOf } from '@itrocks/decorator/class'
 
 export function Super<T extends object>(self: object): T
 {
@@ -8,13 +11,13 @@ export function Super<T extends object>(self: object): T
 
 function uses<T extends Type>(target: T, mixins: Type[]): T
 {
-	const builtTarget = (() => class extends target {
+	const builtTarget = class extends target {
 		[index: string]: any
 		constructor(...args: any[]) {
 			super(...args)
 			for (const mixin of mixins) this[mixin.name](...args)
 		}
-	})()
+	}
 
 	for (const mixin of mixins) {
 		const already = ['constructor']
@@ -48,8 +51,8 @@ export function Uses<T extends object>(...mixins: Type[])
 	return (target: Type<T>) => {
 		mixins = mixins.concat(usesOf(target))
 		const builtTarget = uses(target, mixins)
-		decorate<T>(USES, mixins)(builtTarget)
-		return builtTarget
+		decorate<T>(USES, mixins)(builtTarget as any)
+		return builtTarget as any
 	}
 }
 
