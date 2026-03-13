@@ -11,13 +11,13 @@ export function Super<T extends object>(self: object): T
 
 function uses<T extends Type>(target: T, mixins: Type[]): T
 {
-	const builtTarget = class extends target {
+	const builtTarget = (() => class extends target {
 		[index: string]: any
 		constructor(...args: any[]) {
 			super(...args)
 			for (const mixin of mixins) this[mixin.name](...args)
 		}
-	}
+	})()
 
 	for (const mixin of mixins) {
 		const already = ['constructor']
