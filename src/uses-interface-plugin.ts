@@ -1,19 +1,15 @@
+import { type ClassDeclaration as ASTClassDeclaration } from '@itrocks/ast'
+import { parse }                 from '@itrocks/ast'
 import { type ClassDeclaration } from 'typescript/unstable/ast'
-import { isCallExpression }       from 'typescript/unstable/ast'
-import { isClassDeclaration }     from 'typescript/unstable/ast'
-import { isDecorator }            from 'typescript/unstable/ast'
-import { isIdentifier }           from 'typescript/unstable/ast'
-import { isImportDeclaration }    from 'typescript/unstable/ast'
-import { isInterfaceDeclaration } from 'typescript/unstable/ast'
-import { isNamedImports }         from 'typescript/unstable/ast'
-import { isStringLiteral }        from 'typescript/unstable/ast'
-import { type ModifierLike }      from 'typescript/unstable/ast'
-import { type Node }              from 'typescript/unstable/ast'
-import { type SourceFile }        from 'typescript/unstable/ast'
-import { type Statement }         from 'typescript/unstable/ast'
-import { SyntaxKind }             from 'typescript/unstable/ast'
-import { TokenFlags }             from 'typescript/unstable/ast'
-import * as factory               from 'typescript/unstable/ast/factory'
+import { isClassDeclaration }    from 'typescript/unstable/ast'
+import { isImportDeclaration }   from 'typescript/unstable/ast'
+import { isNamedImports }        from 'typescript/unstable/ast'
+import { type ModifierLike }     from 'typescript/unstable/ast'
+import { type SourceFile }       from 'typescript/unstable/ast'
+import { type Statement }        from 'typescript/unstable/ast'
+import { SyntaxKind }            from 'typescript/unstable/ast'
+import { TokenFlags }            from 'typescript/unstable/ast'
+import * as factory              from 'typescript/unstable/ast/factory'
 
 class UpdateOptions
 {
@@ -30,15 +26,14 @@ function declarationKey(fileName: string)
 	return fileName.replace(/(?:\.d)?\.[cm]?tsx?$/, '')
 }
 
-function usesDecoratorValues(node: ClassDeclaration)
+function usesDecoratorValues(node: ASTClassDeclaration)
 {
 	const mixins: string[] = []
-	for (const decorator of node.modifiers?.filter(isDecorator) ?? []) {
-		if (!isCallExpression(decorator.expression)) continue
-		if (decorator.expression.expression.getText() !== 'Uses') continue
-		for (const argument of decorator.expression.arguments) {
-			if (!isIdentifier(argument)) continue
-			mixins.push(argument.text)
+	for (const decorator of node.decorators) {
+		if (decorator.name !== 'Uses') continue
+		for (const argument of decorator.arguments) {
+			if (argument.kind !== 'identifier') continue
+			mixins.push(argument.name)
 		}
 	}
 	return mixins
@@ -86,30 +81,23 @@ export default () => function transformer()
 		const imports           = new Map<string, { default: boolean, path: string }>
 		const updateOptions     = new UpdateOptions
 		const alreadyInterfaces = new Set<string>
+		const sourceModule      = parse(sourceFile.text, sourceFile.fileName)
 
-		function visit(node: Node): void
-		{
-			if (isImportDeclaration(node) && node.importClause && isStringLiteral(node.moduleSpecifier)) {
-				const importPath    = node.moduleSpecifier.text
-				const namedBindings = node.importClause.namedBindings
-				const name          = node.importClause.name
-				if (name) {
-					imports.set(name.text, { default: true, path: importPath })
-				}
-				if (namedBindings && isNamedImports(namedBindings)) {
-					namedBindings.elements.forEach(element => {
-						imports.set(element.name.text, { default: false, path: importPath })
-					})
-				}
+		for (const declaration of sourceModule.imports) {
+			if (declaration.default) {
+				imports.set(declaration.default, { default: true, path: declaration.from })
 			}
+			for (const specifier of declaration.named) {
+				imports.set(specifier.local, { default: false, path: declaration.from })
+			}
+		}
 
-			if (isClassDeclaration(node)) {
-				const className = node.name?.text
-				const mixins    = usesDecoratorValues(node)
+		for (const declaration of sourceModule.declarations) {
+			if (declaration.kind === 'class') {
+				const className = declaration.name
+				const mixins    = usesDecoratorValues(declaration)
 				if (className && mixins.length) {
-					const isDefault = node.modifiers?.some(
-						modifier => (modifier.kind === SyntaxKind.DefaultKeyword)
-					)
+					const isDefault = declaration.isDefault
 
 					if (isDefault) updateOptions.updateClasses.add(className)
 					if (!alreadyInterfaces.has(className)) {
@@ -124,18 +112,14 @@ export default () => function transformer()
 				}
 			}
 
-			if (isInterfaceDeclaration(node)) {
-				const className = node.name.text
-				if (node.modifiers?.some(modifier => (modifier.kind === SyntaxKind.ExportKeyword))) {
+			if (declaration.kind === 'interface') {
+				const className = declaration.name
+				if (declaration.exported) {
 					alreadyInterfaces.add(className)
 					updateOptions.createInterfaces.delete(className)
 				}
 			}
-
-			node.forEachChild(visit)
 		}
-
-		visit(sourceFile)
 		return sourceFile
 	}
 
