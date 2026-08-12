@@ -5,14 +5,12 @@
 	},
 	"dependencies": {
 		"@itrocks/class-type": "latest",
-		"@itrocks/decorator": "latest"
+		"@itrocks/decorator": "latest",
+		"typescript": "^7.0"
 	},
 	"description": "Apply reusable mixins to your classes effortlessly with the @Uses decorator",
 	"devDependencies": {
-		"@types/jest": "^30.0",
-		"jest": "^30.2",
-		"ts-jest": "^29.4",
-		"typescript": "^6.0"
+		"@types/node": "^24.10"
 	},
 	"engines": {
 		"node": ">=24"
@@ -28,13 +26,6 @@
 		"!*.map"
 	],
 	"homepage": "https://it.rocks",
-	"jest": {
-		"preset": "ts-jest",
-		"testEnvironment": "node",
-		"testMatch": [
-			"**/?(*.)+(spec|test).ts"
-		]
-	},
 	"keywords": [
 		"backend",
 		"class",
@@ -57,7 +48,7 @@
 	},
 	"scripts": {
 		"build": "tsc",
-		"test": "jest"
+		"test": "npm run build && node --test --test-isolation=none test/*.test.js"
 	},
-	"version": "0.1.3"
+	"version": "0.2.0"
 }
